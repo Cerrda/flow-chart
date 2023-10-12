@@ -1,0 +1,49 @@
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+body {
+  margin: 0;
+}
+.operate-button i {
+  font-size: 24px;
+}
+.del-tooltip {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+.el-card__body {
+  width: 96vw;
+  height: 86vh;
+  overflow-y: auto;
+}
+.el-card__header div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.el-table__row td:last-child .cell {
+  display: flex;
+  gap: 10px;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  background-clip: padding-box;
+  border: solid transparent;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-track {
+  background-clip: padding-box;
+  border: solid transparent;
+  border-width: 1px;
+}

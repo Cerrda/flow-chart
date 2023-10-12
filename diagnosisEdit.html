@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./elementui/index.css" />
+    <link rel="stylesheet" href="./css/diagnosisEdit.css" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+    <title>编辑诊断项</title>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <el-container>
+        <el-aside width="350px" style="background-color: rgb(238, 241, 246)" v-loading="loading">
+          <div class="search">
+            <el-input placeholder="请输入内容" v-model="searchValue" @keyup.enter.native="search" clearable round>
+            </el-input>
+            <el-button type="primary" @click="search" icon="el-icon-search" size="mini" plain></el-button>
+          </div>
+          <el-menu :default-active="activeInfo" @select="selectMenu" class="menu" :default-openeds="defaultOpeneds">
+            <template v-for="(value1,key1) in nowMenuData" :key="key1">
+              <el-submenu :index="key1">
+                <template slot="title">
+                  <i class="el-icon-folder"></i>
+                  <span>{{key1}}</span>
+                </template>
+                <template v-for="(value2,key2) in value1" :key="key1+key2">
+                  <el-submenu :index="key1+key2">
+                    <template slot="title">
+                      <i class="el-icon-folder"></i>
+                      <span>{{key2}}</span>
+                    </template>
+                    <template v-for="item in value2">
+                      <el-tooltip
+                        effect="light"
+                        :content="item"
+                        placement="bottom"
+                        :key="key1 + '--' + key2 + '--' + item"
+                        :visible-arrow="false"
+                        open-delay="1000"
+                        :enterable="false">
+                        <el-menu-item :index="key1 + '--' + key2 + '--' + item" :key="key1 + '--' + key2 + '--' + item"
+                          >{{item}}</el-menu-item
+                        >
+                      </el-tooltip>
+                    </template>
+                  </el-submenu>
+                </template>
+              </el-submenu>
+            </template>
+            <transition name="el-fade-in"> <el-empty description="暂无数据" v-show="noMenuData"></el-empty></transition>
+          </el-menu>
+        </el-aside>
+        <el-container>
+          <el-main class="scroll-main">
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <el-breadcrumb separator-class="el-icon-arrow-right">
+                  <el-breadcrumb-item>{{activeInfo.split('--')[0]}}</el-breadcrumb-item>
+                  <el-breadcrumb-item>{{activeInfo.split('--')[1]}}</el-breadcrumb-item>
+                  <el-breadcrumb-item>{{activeInfo.split('--')[2]}}</el-breadcrumb-item>
+                </el-breadcrumb>
+              </div>
+              <el-form
+                class="active-diagnosis-form"
+                :model="activeDiagnosisForm"
+                ref="activeDiagnosisForm"
+                status-icon
+                :rules="rules">
+                <template v-for="item in formItemLayout">
+                  <el-form-item
+                    :key="item.prop"
+                    :label="item.label"
+                    label-width="160px"
+                    :prop="item.prop"
+                    :class="item.prop">
+                    <el-input
+                      v-if="!item.type"
+                      type="textarea"
+                      :autosize="{ minRows: 2, maxRows: 4}"
+                      v-model="activeDiagnosisForm[item.prop]"
+                      clearable
+                      :placeholder="item.prop==='apiInfoList'? false : '请输入内容'"
+                      :disabled="item.prop==='name' || item.prop==='apiInfoList'"></el-input>
+                    <template v-else-if="item.type==='radio'">
+                      <el-radio v-model="activeDiagnosisForm[item.prop]" label="true" border>是</el-radio>
+                      <el-radio v-model="activeDiagnosisForm[item.prop]" label="false" border>否</el-radio>
+                    </template>
+                    <i
+                      v-if="item.prop!=='name' && item.prop!=='apiInfoList'"
+                      @click="toggleAlert(item.prop)"
+                      class="el-icon-question"></i>
+                  </el-form-item>
+                  <transition name="el-zoom-in-top">
+                    <el-alert
+                      v-show="item.showAlert"
+                      :title="item.title"
+                      :description="item.description"
+                      type="info"
+                      show-icon
+                      :closable="false">
+                    </el-alert>
+                  </transition>
+                </template>
+                <el-form-item>
+                  <el-button type="primary" @click="submitEdit" plain>提交</el-button>
+                </el-form-item>
+              </el-form>
+            </el-card>
+          </el-main>
+        </el-container>
+      </el-container>
+    </div>
+
+    <script src="./js/menuData.js"></script>
+    <script src="./axios/axios.min.js"></script>
+    <script src="./js/request.js"></script>
+    <script src="./js/diagnosisEditApi.js"></script>
+    <script src="./vue/vue@2.js"></script>
+    <script src="./elementui/index.js"></script>
+    <script src="./js/diagnosisEdit.js"></script>
+  </body>
+</html>

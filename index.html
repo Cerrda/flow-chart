@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>流程设计工具</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" href="./fontawesome/css/all.min.css" />
+    <link href="./smartmenus/dist/css/sm-core-css.css" rel="stylesheet" type="text/css" />
+    <link href="./smartmenus/dist/css/sm-simple/sm-simple.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="./css/flowChat.css" />
+    <link rel="stylesheet" href="./css/toast.css" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+    <script type="text/javascript" src="./jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="./jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="./smartmenus/dist/jquery.smartmenus.min.js"></script>
+    <script type="text/javascript" src="./d3jsv4/d3.min.js"></script>
+    <script type="text/javascript" src="./d3jsv4/d3-transform.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fuild">
+      <div id="left-wrapper" class="left-wrapper">
+        <div class="header">
+          <div class="input">
+            <input type="text" placeholder="请输入要搜索的诊断项" class="search-input" onkeyup="searchKeyUp(event)" />
+            <span class="clear" onclick="clearSearchInput()">x</span>
+          </div>
+          <div class="search-button" onclick="search()"><i class="fa fa-search"></i></div>
+        </div>
+        <div id="menu-loading">
+          <div>G</div>
+          <div>N</div>
+          <div>I</div>
+          <div>D</div>
+          <div>A</div>
+          <div>O</div>
+          <div>L</div>
+        </div>
+        <div class="no-data">暂无该诊断项</div>
+        <div class="left-control" onclick="toggleLeftMenu()"><i class="fa-solid fa-caret-left"></i></div>
+      </div>
+      <div class="middle-wrapper">
+        <h4>流程图设计</h4>
+        <div id="idsw-bpmn" class="bpmn" style="position: relative; width: 100%; height: calc(100% - 61px)">
+          <svg id="svg-canvas" width="100%" height="100%">
+            <defs>
+              <marker
+                id="arrow"
+                markerUnits="strokeWidth"
+                markerWidth="12"
+                svgrect
+                markerHeight="12"
+                viewBox="0 0 12 12"
+                refX="6"
+                refY="6"
+                orient="auto">
+                <path d="M2,2 L10,6 L2,10 L6,6 L2,2" style="fill: #212930" />
+              </marker>
+              <marker
+                id="beginArrow"
+                markerUnits="strokeWidth"
+                markerWidth="12"
+                svgrect
+                markerHeight="12"
+                viewBox="0 0 12 12"
+                refX="6"
+                refY="6"
+                orient="auto">
+                <path d="M2,2 L10,6 L2,10 L6,6 L2,2" />
+              </marker>
+              <marker
+                id="sceneArrow"
+                markerUnits="strokeWidth"
+                markerWidth="12"
+                svgrect
+                markerHeight="12"
+                viewBox="0 0 12 12"
+                refX="6"
+                refY="6"
+                orient="auto">
+                <path d="M2,2 L10,6 L2,10 L6,6 L2,2" />
+              </marker>
+              <!-- 选中path的箭头 -->
+              <marker
+                id="selectedArrow"
+                markerUnits="strokeWidth"
+                markerWidth="12"
+                svgrect
+                markerHeight="12"
+                viewBox="0 0 12 12"
+                refX="6"
+                refY="6"
+                orient="auto">
+                <path d="M2,2 L10,6 L2,10 L6,6 L2,2" style="fill: #f56e99" />
+              </marker>
+              <!-- 定义线性渐变 -->
+              <linearGradient id="beginToScene" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" />
+                <stop offset="100%" />
+              </linearGradient>
+              <linearGradient id="sceneToDiagnosticType" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" />
+                <stop offset="100%" />
+              </linearGradient>
+            </defs>
+            <!-- 刷子 -->
+            <rect id="svgrect" class="brush-back" width="100%" height="100%"></rect>
+            <g name="rootG" transform="translate(0,0) scale(1)" class="zoomed"></g>
+          </svg>
+        </div>
+      </div>
+      <div class="right-wrapper">
+        <table class="properties">
+          <tr class="header">
+            <th>属性</th>
+            <th>值</th>
+            <th></th>
+          </tr>
+        </table>
+        <div class="add">
+          <div class="title">添加属性</div>
+          <input oninput="inputAttribute(this)" placeholder="输入属性名" type="text" />
+          <input oninput="inputValue(this)" placeholder="输入属性值" type="text" />
+          <button onclick="addAttribute()" disabled>添加属性</button>
+        </div>
+        <div class="edit-style">
+          <div class="title">修改样式</div>
+          <div class="box">
+            <div class="item">
+              <svg width="86" height="80" class="rect">
+                <rect x="3" y="18" width="80" height="44" fill="#fff" stroke="#000" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div class="item">
+              <svg width="86" height="80" class="round-rect">
+                <rect
+                  x="3"
+                  y="18"
+                  width="80"
+                  height="44"
+                  fill="#fff"
+                  stroke="#000"
+                  stroke-width="1.5"
+                  rx="20"
+                  ry="20" />
+              </svg>
+            </div>
+            <div class="item">
+              <svg width="86" height="80" class="ellipse">
+                <ellipse cx="43" cy="40" rx="40" ry="24" fill="#fff" stroke="#000" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div class="item">
+              <svg width="86" height="80" class="parallelogram">
+                <path
+                  d="M 4 60 L 14 20 L 82 20 L 72 60 Z"
+                  fill="#fff"
+                  stroke="#000"
+                  stroke-width="1.5"
+                  stroke-miterlimit="10"></path>
+              </svg>
+            </div>
+            <div class="item">
+              <svg width="86" height="80" class="hexagon">
+                <polygon
+                  points="13,18 73,18 83,40 73,62 13,62 3,40"
+                  fill="#fff"
+                  stroke="#000"
+                  stroke-width="1.5"></polygon>
+              </svg>
+            </div>
+            <div class="item">
+              <svg width="86" height="80" class="diamond">
+                <path
+                  d="M 4 40 L 41 20 L 82 40 L 41 60 L 4 40 Z"
+                  fill="#fff"
+                  stroke="#000"
+                  stroke-width="1.5"
+                  stroke-miterlimit="10"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tool">
+      <div class="switch">
+        <input
+          onchange="switchChange(this)"
+          id="cmn-toggle-4"
+          class="cmn-toggle cmn-toggle-round-flat"
+          type="checkbox" />
+        <label for="cmn-toggle-4"></label>
+        保存时允许节点单独存在
+      </div>
+      <div class="default-node-style">
+        <div class="choose-style" onclick="changeDefaultNodeStyle(this)">
+          <svg width="86" height="80" class="round-rect">
+            <rect x="3" y="18" width="80" height="44" fill="#fff" stroke="#000" stroke-width="1.5" rx="20" ry="20" />
+          </svg>
+        </div>
+        <div class="box">
+          <div class="item">
+            <svg width="86" height="80" class="rect">
+              <rect x="3" y="18" width="80" height="44" fill="#fff" stroke="#000" stroke-width="1.5" />
+            </svg>
+          </div>
+          <div class="item">
+            <svg width="86" height="80" class="round-rect">
+              <rect x="3" y="18" width="80" height="44" fill="#fff" stroke="#000" stroke-width="1.5" rx="20" ry="20" />
+            </svg>
+          </div>
+          <div class="item">
+            <svg width="86" height="80" class="ellipse">
+              <ellipse cx="43" cy="40" rx="40" ry="24" fill="#fff" stroke="#000" stroke-width="1.5" />
+            </svg>
+          </div>
+          <div class="item">
+            <svg width="86" height="80" class="parallelogram">
+              <path
+                d="M 4 60 L 14 20 L 82 20 L 72 60 Z"
+                fill="#fff"
+                stroke="#000"
+                stroke-width="1.5"
+                stroke-miterlimit="10"></path>
+            </svg>
+          </div>
+          <div class="item">
+            <svg width="86" height="80" class="hexagon">
+              <polygon
+                points="13,18 73,18 83,40 73,62 13,62 3,40"
+                fill="#fff"
+                stroke="#000"
+                stroke-width="1.5"></polygon>
+            </svg>
+          </div>
+          <div class="item">
+            <svg width="86" height="80" class="diamond">
+              <path
+                d="M 4 40 L 41 20 L 82 40 L 41 60 L 4 40 Z"
+                fill="#fff"
+                stroke="#000"
+                stroke-width="1.5"
+                stroke-miterlimit="10"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <a class="btn btn-link" href="#" onclick="svg_large('large',this);">
+        <i class="fa fa-search-plus fx-1.5" aria-hidden="true"></i>&nbsp;放大
+      </a>
+      <a class="btn btn-link" href="#" onclick="svg_small('small',this);">
+        <i class="fa fa-search-minus" aria-hidden="true"></i>&nbsp;缩小
+      </a>
+      <a class="btn btn-link" href="#" onclick="svg_rate('rate',this);">
+        <i class="fa fa-repeat" aria-hidden="true"></i>&nbsp;恢复
+      </a>
+      <a class="btn btn-link" href="#" onclick="svg_clear('clear',this);">
+        <i class="fa-regular fa-trash-can" aria-hidden="true"></i>&nbsp;清空
+      </a>
+      <a class="btn btn-link" href="#" onclick="saveClick(event)">
+        <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>&nbsp;保存
+      </a>
+      <a class="btn btn-link upload" href="#">
+        <i class="fa fa-upload" aria-hidden="true" style="font-size: 21px"></i>&nbsp;加载保存数据
+        <input class="upload-input" type="file" id="fileInput" accept=".json" onchange="handleFileChange(event,this)" />
+      </a>
+    </div>
+    <div id="nodeMenu">
+      <ul id="main-menu" class="sm sm-vertical sm-simple">
+        <li><a href="#" onclick="delNode()">删除节点</a></li>
+      </ul>
+    </div>
+    <div id="selectMenu">
+      <ul id="select-menu" class="sm sm-vertical sm-simple">
+        <li><a href="#" onclick="align('left')">向左对齐</a></li>
+        <li><a href="#" onclick="align('right')">向右对齐</a></li>
+        <li><a href="#" onclick="uniformDistribute('horizontal')">水平均匀分布</a></li>
+        <li><a href="#" onclick="align('up')">向上对齐</a></li>
+        <li><a href="#" onclick="align('down')">向下对齐</a></li>
+        <li><a href="#" onclick="uniformDistribute('vertical')">垂直均匀分布</a></li>
+        <li><a href="#" onclick="delSelectedNode()">删除所有框选节点</a></li>
+      </ul>
+    </div>
+    <div id="pathMenu">
+      <ul id="path-menu" class="sm sm-vertical sm-simple">
+        <li><a href="#" onclick="delPath()">删除连线</a></li>
+      </ul>
+    </div>
+    <div id="judgeMenu">
+      <ul id="judge-menu" class="sm sm-vertical sm-simple">
+        <li><a href="#" onclick="editPath(true)">是</a></li>
+        <li><a href="#" onclick="editPath(false)">否</a></li>
+      </ul>
+    </div>
+    <div id="saveMenu">
+      <input class="flow-name" type="text" placeholder="输入流程描述信息" oninput="inputFlowName(this)" />
+      <button class="save-confirm" disabled onclick="downloadJSON()">确定</button>
+    </div>
+    <!-- 框选 -->
+    <div class="mask"></div>
+    <!-- toast -->
+    <ul class="notifications"></ul>
+  </body>
+
+  <script src="./js/menuData.js"></script>
+  <script src="./axios/axios.min.js"></script>
+  <script src="./js/request.js"></script>
+  <script src="./js/flowChatApi.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/globalVariable.js"></script>
+  <script src="./js/toast.js"></script>
+  <script src="./js/index.js"></script>
+  <script src="./js/operate.js"></script>
+</html>

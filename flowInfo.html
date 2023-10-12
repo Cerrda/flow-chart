@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>流程信息</title>
+    <link rel="stylesheet" href="./elementui/index.css" />
+    <link rel="stylesheet" href="./css/flowInfo.css" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <div id="app">
+      <el-card>
+        <!-- <el-button type="primary" icon="el-icon-plus">添加流程</el-button> -->
+        <div slot="header">
+          <span>流程信息</span>
+          <el-button type="primary" icon="el-icon-plus" @click="addFlow">添加流程</el-button>
+        </div>
+        <el-table :data="tableData" stripe style="width: 100%" height="86vh">
+          <el-table-column prop="id" label="流程ID"> </el-table-column>
+          <el-table-column prop="groupId" label="流程所属系统ID"> </el-table-column>
+          <el-table-column prop="totalFlowName" label="流程名称"> </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-tooltip content="编辑流程" placement="top">
+                <el-button
+                  class="operate-button"
+                  type="text"
+                  icon="el-icon-edit-outline"
+                  @click="editFlow(scope.row.id)">
+                </el-button>
+              </el-tooltip>
+              <el-tooltip content="删除流程" placement="top" class="del-tooltip">
+                <el-popconfirm title="确定删除该流程吗？" @confirm="delFlow(scope.row.id)">
+                  <el-button slot="reference" class="operate-button" type="text" icon="el-icon-delete"> </el-button>
+                </el-popconfirm>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
+
+    <script src="./axios/axios.min.js"></script>
+    <script src="./vue/vue@2.js"></script>
+    <script src="./elementui/index.js"></script>
+    <script src="./js/flowInfoApi.js"></script>
+    <script src="./js/request.js"></script>
+    <script src="./js/flowInfo.js"></script>
+  </body>
+</html>
