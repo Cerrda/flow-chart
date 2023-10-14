@@ -2,7 +2,9 @@ var app = new Vue({
   el: '#app',
   data() {
     return {
-      tableData: []
+      tableData: [],
+      // 本地的ip地址
+      host: ['127.0.0.1', '192.168.4.85']
     }
   },
   created() {
@@ -79,11 +81,11 @@ var app = new Vue({
       return (/(\?|\&)support=sqe(|\&)/.test(search) || hasCreateMeasureDrillDiv) && isSub
     },
     editFlow(id) {
-      url = window.location.hostname === '127.0.0.1' ? `/index.html?id=${id}` : `/flowchart/index.html?id=${id}`
+      url = this.host.includes(window.location.hostname) ? `/index.html?id=${id}` : `/flowchart/index.html?id=${id}`
       this.goPage('md_' + new Date().getTime(), url, '编辑流程')
     },
     addFlow() {
-      url = window.location.hostname === '127.0.0.1' ? `/index.html` : `/flowchart/index.html`
+      url = this.host.includes(window.location.hostname) ? `/index.html` : `/flowchart/index.html`
       this.goPage('md_' + new Date().getTime(), url, '添加流程')
     }
   }
