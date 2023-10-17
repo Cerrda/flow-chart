@@ -1,9 +1,9 @@
-var getMenuListAPI = data =>
+var getMenuListAPI = () =>
   request({
     url: 'menuList'
   })
 
-var editFlowAPI = data =>
+var editFlowAPI = (data) =>
   request({
     url: 'addFlowProp',
     method: 'post',

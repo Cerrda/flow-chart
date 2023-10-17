@@ -3,14 +3,14 @@ var getMenuListAPI = () =>
     url: 'menuList'
   })
 
-var postFlowDataAPI = data =>
+var postFlowDataAPI = (data) =>
   request({
     url: 'saveOrUpdateFlow',
     method: 'post',
     data
   })
 
-var getFlowDataAPI = id =>
+var getFlowDataAPI = (id) =>
   request({
     url: `getFlowById/${id}`
   })

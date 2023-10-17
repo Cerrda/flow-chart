@@ -363,6 +363,18 @@ async function getMenuList() {
     }
     processedData[item.nodeDescription] = itemData
   }
+  // 数组去重
+  const uniqueObjects = {}
+  const uniqueArray = []
+
+  allNodesData.forEach((obj) => {
+    if (!uniqueObjects[obj.id]) {
+      uniqueObjects[obj.id] = true
+      uniqueArray.push(obj)
+    }
+  })
+  allNodesData = uniqueArray
+
   menuData[diagnosticItem.diagnosticItemName] = processedData
   // 创建左侧菜单
   createMenu(menuData, d3.select('#left-wrapper'))

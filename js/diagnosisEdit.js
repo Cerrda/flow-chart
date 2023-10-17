@@ -205,6 +205,19 @@ var app = new Vue({
         }
         listData[item.nodeDescription] = itemData
       }
+
+      // 数组去重
+      const uniqueObjects = {}
+      const uniqueArray = []
+
+      this.diagnosticData.forEach((obj) => {
+        if (!uniqueObjects[obj.id]) {
+          uniqueObjects[obj.id] = true
+          uniqueArray.push(obj)
+        }
+      })
+      this.diagnosticData = uniqueArray
+
       this.nowMenuData = listData
       this.menuData = Object.freeze(listData)
       this.defaultOpeneds = Object.keys(listData).flatMap((item) => [item, item + '用户侧诊断', item + '网络侧诊断'])

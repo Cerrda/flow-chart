@@ -1,3 +1,6 @@
+[v-cloak] {
+  display: none;
+}
 #app {
   display: flex;
   justify-content: center;
@@ -24,6 +27,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.button button:first-child {
+  margin-right: 20px;
 }
 .el-table__row td:last-child .cell {
   display: flex;
